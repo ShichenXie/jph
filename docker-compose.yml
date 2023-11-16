@@ -1,0 +1,35 @@
+version: '3.5'
+
+services:
+  jupyterhub:
+    # platform: linux/amd64
+    image: shichenxie/jph:4.0
+    container_name: jupyterhub
+    # Permit communication with the host's docker server
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "jupyterhub_data:/srv/jupyterhub"
+    networks:
+      - dstudio_net
+    ports:
+      - "8000:8000"
+    environment:
+      DOCKER_NETWORK_NAME: dstudio_net
+      DOCKER_JUPYTERLAB_IMAGE: jupyter/minimal-notebook:hub-4.0.2
+      CONTAINER_JUPYTERLAB_REMOVE: F
+      HOST_WORK_DIR: 
+      HUB_DEFAULT_URL: /lab
+      HUB_ADMIN_USER: test
+      HUB_TIMEOUT: 1296000
+      # User containers will access hub by container name on the Docker network
+      HUB_IP: jupyterhub
+    restart: always 
+  
+networks:
+  dstudio_net:
+     driver: bridge
+     name: dstudio_net
+     
+volumes:
+  jupyterhub_data:
+    name: jupyterhub_data
